@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Connect - Real App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .user-email {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* ===== AUTH PAGES ===== */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .auth-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.85rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error, textarea.error {
+            border-color: #dc2626;
+        }
+
+        .error-text {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        .char-count {
+            color: #999;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.85rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: #6b7280;
+        }
+
+        button.secondary:hover {
+            background: #4b5563;
+        }
+
+        button.outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        button.outline:hover {
+            background: #f0f4ff;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 1.5rem 0;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .auth-footer p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-footer a, .toggle-auth {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-footer a:hover, .toggle-auth:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== MAIN APP ===== */
+        .app-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-button {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .nav-button:hover {
+            background: #e0e0e0;
+        }
+
+        .nav-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+
+        .logout-btn:hover {
+            background: #991b1b;
+        }
+
+        .main-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-button {
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            color: white;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-post-lost {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-browse {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        /* ===== ITEMS ===== */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .results-count {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 1rem 0;
+        }
+
+        .item-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .item-icon {
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge.lost {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.found {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .contact-button {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* ===== SUCCESS MESSAGE ===== */
+        .success-message {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #10b981;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .auth-box {
+                padding: 1.5rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .item-card {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ============ LOCALSTORAGE DATABASE (Real data persistence) ============
+const db = {
+    users: JSON.parse(localStorage.getItem('lf_users') || '[]'),
+    items: JSON.parse(localStorage.getItem('lf_items') || '[]'),
+    messages: JSON.parse(localStorage.getItem('lf_messages') || '[]'),
+
+    saveUsers() {
+        localStorage.setItem('lf_users', JSON.stringify(this.users));
+    },
+    saveItems() {
+        localStorage.setItem('lf_items', JSON.stringify(this.items));
+    },
+    saveMessages() {
+        localStorage.setItem('lf_messages', JSON.stringify(this.messages));
+    }
+};
+
+// ============ APP STATE ============
+let appState = {
+    currentPage: 'auth',
+    authMode: 'login', // 'login' or 'signup'
+    currentUser: localStorage.getItem('lf_currentUser') ? JSON.parse(localStorage.getItem('lf_currentUser')) : null,
+    filters: { searchTerm: '', type: 'all', category: 'all' },
+    selectedChat: null,
+    formErrors: {},
+    successMessage: '',
+    postForm: {}
+};
+
+// ============ VALIDATION ============
+const validate = {
+    email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    password: (password) => password.length >= 6,
+    phone: (phone) => /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(phone.replace(/\s/g, '')),
+    name: (name) => name.trim().length >= 3,
+    title: (title) => title.trim().length >= 3 && title.trim().length <= 100,
+    description: (desc) => desc.trim().length >= 10 && desc.trim().length <= 2000,
+    location: (location) => location.trim().length >= 3 && location.trim().length <= 200,
+    reward: (reward) => !reward || (parseFloat(reward) >= 0 && parseFloat(reward) <= 10000),
+    message: (msg) => msg.trim().length > 0 && msg.trim().length <= 500
+};
+
+// ============ RENDER FUNCTION ============
+function render() {
+    const app = document.getElementById('app');
+    
+    if (!appState.currentUser) {
+        app.innerHTML = renderAuth();
+    } else {
+        app.innerHTML = renderApp();
+    }
+    
+    attachEventListeners();
+}
+
+// ============ AUTH PAGE ============
+function renderAuth() {
+    return `
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <div class="auth-icon">🔍</div>
+                    <h1 class="auth-title">${appState.authMode === 'login' ? 'Welcome Back' : 'Join Us'}</h1>
+                    <p class="auth-subtitle">${appState.authMode === 'login' ? 'Sign in to your account' : 'Create a new account'}</p>
+                </div>
+
+                ${renderAuthForm()}
+
+                <div class="auth-footer">
+                    <p>${appState.authMode === 'login' ? "Don't have an account?" : 'Already have an account?'} <span class="toggle-auth" onclick="toggleAuthMode()">${appState.authMode === 'login' ? 'Sign up' : 'Sign in'}</span></p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderAuthForm() {
+    if (appState.authMode === 'login') {
+        return `
+            <form id="authForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="auth-email" placeholder="you@example.com" required>
+                    <span class="error-text" id="email-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••" required>
+                    <span class="error-text" id="password-error"></span>
+                </div>
+                
+                <button type="submit">Sign In</button>
+            </form>
+        `;
+    } else {
+        return `
+            <form id="authForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe" required>
+                    <span class="error-text" id="name-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                    <span class="error-text" id="email-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="signup-phone" placeholder="+1234567890" required>
+                    <span class="error-text" id="phone-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Min 6 characters" required>
+                    <span class="error-text" id="password-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="••••••" required>
+                    <span class="error-text" id="confirm-error"></span>
+                </div>
+                
+                <button type="submit">Create Account</button>
+            </form>
+        `;
+    }
+}
+
+// ============ MAIN APP ============
+function renderApp() {
+    const userItems = db.items.filter(i => i.userId === appState.currentUser.id);
+    const lostCount = userItems.filter(i => i.type === 'lost').length;
+    const foundCount = userItems.filter(i => i.type === 'found').length;
+
+    return `
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <span>🔍</span>
+                    <span>Lost & Found</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <div class="user-name">${appState.currentUser.name}</div>
+                        <div class="user-email">${appState.currentUser.email}</div>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()" style="width: auto; margin: 0; padding: 0.5rem 1rem;">🚪 Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="app-container">
+                <!-- SIDEBAR -->
+                <div class="sidebar">
+                    <h3>Navigation</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-button ${appState.currentPage === 'home' ? 'active' : ''}" onclick="goToPage('home')">🏠 Dashboard</button>
+                        <button class="nav-button ${appState.currentPage === 'browse' ? 'active' : ''}" onclick="goToPage('browse')">🔎 Browse</button>
+                        <button class="nav-button ${appState.currentPage === 'post' ? 'active' : ''}" onclick="goToPage('post')">➕ Post Item</button>
+                        <button class="nav-button ${appState.currentPage === 'profile' ? 'active' : ''}" onclick="goToPage('profile')">👤 Profile</button>
+                    </div>
+                </div>
+
+                <!-- MAIN CONTENT -->
+                <div class="main-content">
+                    ${appState.successMessage ? `<div class="success-message">${appState.successMessage}</div>` : ''}
+                    
+                    ${appState.currentPage === 'home' ? renderHome(lostCount, foundCount) : ''}
+                    ${appState.currentPage === 'browse' ? renderBrowse() : ''}
+                    ${appState.currentPage === 'post' ? renderPost() : ''}
+                    ${appState.currentPage === 'profile' ? renderProfile() : ''}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ============ DASHBOARD ============
+function renderHome(lostCount, foundCount) {
+    const allItems = db.items.length;
+    
+    return `
+        <h2>Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">${lostCount}</div>
+                <div class="stat-label">Your Lost Items</div>
+            </div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="stat-number">${foundCount}</div>
+                <div class="stat-label">Your Found Items</div>
+            </div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="stat-number">${allItems}</div>
+                <div class="stat-label">Total Items</div>
+            </div>
+        </div>
+
+        <h3 style="margin: 2rem 0 1rem;">Quick Actions</h3>
+        <div class="quick-actions">
+            <button class="action-button btn-post-lost" onclick="goToPage('post')">📌 Post Lost Item</button>
+            <button class="action-button btn-browse" onclick="goToPage('browse')">🔎 Browse Items</button>
+        </div>
+    `;
+}
+
+// ============ BROWSE ITEMS ============
+function renderBrowse() {
+    const filtered = db.items.filter(i => 
+        (appState.filters.type === 'all' || i.type === appState.filters.type) &&
+        (appState.filters.category === 'all' || i.category === appState.filters.category) &&
+        (i.title.toLowerCase().includes(appState.filters.searchTerm.toLowerCase()) ||
+         i.description.toLowerCase().includes(appState.filters.searchTerm.toLowerCase()))
+    );
+
+    return `
+        <h2>Browse Items</h2>
+        
+        <div class="filters">
+            <div class="form-group">
+                <label>Search</label>
+                <input type="text" placeholder="Search items..." value="${appState.filters.searchTerm}" 
+                       onchange="updateFilter('searchTerm', this.value)">
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select onchange="updateFilter('type', this.value)">
+                    <option value="all">All Items</option>
+                    <option value="lost" ${appState.filters.type === 'lost' ? 'selected' : ''}>Lost Items</option>
+                    <option value="found" ${appState.filters.type === 'found' ? 'selected' : ''}>Found Items</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select onchange="updateFilter('category', this.value)">
+                    <option value="all">All Categories</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="documents">Documents</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="keys">Keys</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="results-count">${filtered.length} Results</div>
+
+        ${filtered.length === 0 ? `
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <p>No items found</p>
+            </div>
+        ` : `
+            ${filtered.map(item => {
+                const poster = db.users.find(u => u.id === item.userId);
+                return `
+                    <div class="item-card">
+                        <div class="item-icon">${item.emoji}</div>
+                        <div class="item-content">
+                            <div class="item-title">${item.title}</div>
+                            <div style="color: #666; margin-bottom: 0.5rem;">📍 ${item.location}</div>
+                            <div style="color: #777; margin-bottom: 1rem;">${item.description}</div>
+                            <div class="item-meta">
+                                <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
+                                <span class="badge">${item.category}</span>
+                                ${item.reward > 0 ? `<span class="badge">💰 $${item.reward}</span>` : ''}
+                                <span class="badge">By: ${poster?.name || 'Unknown'}</span>
+                            </div>
+                            ${item.userId !== appState.currentUser.id ? `<button class="contact-button" onclick="contactUser('${item.userId}', '${item.id}')">💬 Contact</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        `}
+    `;
+}
+
+// ============ POST ITEM ============
+function renderPost() {
+    const categories = ['accessories', 'electronics', 'documents', 'clothing', 'keys'];
+    const emojis = {
+        accessories: ['👜', '⌚', '🎒', '👓', '🧣'],
+        electronics: ['📱', '💻', '⌨️', '📷', '🎧'],
+        documents: ['📄', '🪪', '📚', '📋', '🎫'],
+        clothing: ['👕', '👖', '👔', '🧥', '👗'],
+        keys: ['🔑', '🗝️', '🏠']
+    };
+
+    const currentEmojis = emojis[appState.postForm?.category || 'accessories'] || emojis.accessories;
+
+    return `
+        <h2>Post Item</h2>
+        
+        <div style="max-width: 600px;">
+            <div class="form-group">
+                <label>Select Icon</label>
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 1rem;">
+                    ${currentEmojis.map(emoji => `
+                        <button type="button" style="font-size: 1.5rem; padding: 10px; background: ${appState.postForm?.emoji === emoji ? '#667eea' : '#f0f0f0'}; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;"
+                                onclick="setPostEmoji('${emoji}')">
+                            ${emoji}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Type</label>
+                <select id="post-type" onchange="updatePostField('type', this.value)">
+                    <option value="lost">Lost Item</option>
+                    <option value="found">Found Item</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="post-title" placeholder="e.g., Blue Leather Wallet" maxlength="100"
+                       value="${appState.postForm?.title || ''}"
+                       onchange="validatePostField('title')"
+                       onblur="validatePostField('title')">
+                <span class="char-count">${(appState.postForm?.title || '').length}/100</span>
+                <span class="error-text" id="title-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select id="post-category" onchange="updatePostCategory(this.value)">
+                    ${categories.map(cat => `<option value="${cat}" ${appState.postForm?.category === cat ? 'selected' : ''}>${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>`).join('')}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="post-description" placeholder="Describe the item in detail..." rows="5" maxlength="2000"
+                         onchange="validatePostField('description')"
+                         onblur="validatePostField('description')">${appState.postForm?.description || ''}</textarea>
+                <span class="char-count">${(appState.postForm?.description || '').length}/2000</span>
+                <span class="error-text" id="description-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="post-location" placeholder="e.g., Downtown Coffee Shop"
+                       value="${appState.postForm?.location || ''}"
+                       onchange="validatePostField('location')"
+                       onblur="validatePostField('location')">
+                <span class="error-text" id="location-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Reward Amount (Optional - for lost items)</label>
+                <input type="number" id="post-reward" placeholder="0" min="0" max="10000"
+                       value="${appState.postForm?.reward || ''}"
+                       onchange="validatePostField('reward')"
+                       onblur="validatePostField('reward')">
+                <span class="error-text" id="reward-error"></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button onclick="submitPost()">Post Item</button>
+                <button class="secondary" onclick="goToPage('home')">Cancel</button>
+            </div>
+        </div>
+    `;
+}
+
+// ============ PROFILE ============
+function renderProfile() {
+    const userItems = db.items.filter(i => i.userId === appState.currentUser.id);
+    const lostCount = userItems.filter(i => i.type === 'lost').length;
+    const foundCount = userItems.filter(i => i.type === 'found').length;
+
+    return `
+        <h2>Your Profile</h2>
+        
+        <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h3>${appState.currentUser.name}</h3>
+            <p style="color: #666; margin-bottom: 0.5rem;">📧 ${appState.currentUser.email}</p>
+            <p style="color: #666;">📞 ${appState.currentUser.phone}</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">${userItems.length}</div>
+                <div class="stat-label">Items Posted</div>
+            </div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="stat-number">${foundCount}</div>
+                <div class="stat-label">Found Items</div>
+            </div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="stat-number">${lostCount}</div>
+                <div class="stat-label">Lost Items</div>
+            </div>
+        </div>
+
+        <h3 style="margin: 2rem 0 1rem;">Your Items</h3>
+        ${userItems.length === 0 ? `
+            <div class="empty-state">
+                <p>No items posted yet</p>
+            </div>
+        ` : `
+            ${userItems.map(item => `
+                <div class="item-card">
+                    <div class="item-icon">${item.emoji}</div>
+                    <div class="item-content">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-meta">
+                            <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
+                            <span class="badge">${new Date(item.createdAt).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        `}
+    `;
+}
+
+// ============ AUTH HANDLERS ============
+function toggleAuthMode() {
+    appState.authMode = appState.authMode === 'login' ? 'signup' : 'login';
+    render();
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+
+    // Reset errors
+    document.getElementById('email-error').textContent = '';
+    document.getElementById('password-error').textContent = '';
+
+    let hasError = false;
+
+    if (!validate.email(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email';
+        hasError = true;
+    }
+
+    if (!validate.password(password)) {
+        document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+    // Find user
+    const user = db.users.find(u => u.email === email && u.password === password);
+
+    if (user) {
+        appState.currentUser = user;
+        appState.currentPage = 'home';
+        localStorage.setItem('lf_currentUser', JSON.stringify(user));
+        render();
+    } else {
+        document.getElementById('email-error').textContent = 'Invalid email or password';
+    }
+}
+
+function handleSignup(e) {
+    e.preventDefault();
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const phone = document.getElementById('signup-phone').value;
+    const password = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+
+    // Reset errors
+    ['name', 'email', 'phone', 'password', 'confirm'].forEach(f => {
+        const el = document.getElementById(`${f}-error`);
+        if (el) el.textContent = '';
+    });
+
+    let hasError = false;
+
+    if (!validate.name(name)) {
+        document.getElementById('name-error').textContent = 'Name must be at least 3 characters';
+        hasError = true;
+    }
+
+    if (!validate.email(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email';
+        hasError = true;
+    }
+
+    if (db.users.some(u => u.email === email)) {
+        document.getElementById('email-error').textContent = 'Email already registered';
+        hasError = true;
+    }
+
+    if (!validate.phone(phone)) {
+        document.getElementById('phone-error').textContent = 'Please enter a valid phone number';
+        hasError = true;
+    }
+
+    if (!validate.password(password)) {
+        document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
+        hasError = true;
+    }
+
+    if (password !== confirm) {
+        document.getElementById('confirm-error').textContent = 'Passwords do not match';
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+    // Create user
+    const newUser = {
+        id: Date.now().toString(),
+        name,
+        email,
+        phone,
+        password
+    };
+
+    db.users.push(newUser);
+    db.saveUsers();
+
+    appState.currentUser = newUser;
+    appState.currentPage = 'home';
+    appState.authMode = 'login';
+    localStorage.setItem('lf_currentUser', JSON.stringify(newUser));
+    render();
+}
+
+function handleLogout() {
+    appState.currentUser = null;
+    appState.currentPage = 'auth';
+    appState.authMode = 'login';
+    localStorage.removeItem('lf_currentUser');
+    render();
+}
+
+// ============ APP HANDLERS ============
+function goToPage(page) {
+    appState.currentPage = page;
+    appState.successMessage = '';
+    if (page === 'post') {
+        appState.postForm = { category: 'accessories', type: 'lost', emoji: '👜' };
+    }
+    render();
+}
+
+function updateFilter(key, value) {
+    appState.filters[key] = value;
+    render();
+}
+
+function setPostEmoji(emoji) {
+    appState.postForm.emoji = emoji;
+    render();
+}
+
+function updatePostCategory(value) {
+    appState.postForm.category = value;
+    render();
+}
+
+function updatePostField(field, value) {
+    appState.postForm[field] = value;
+    render();
+}
+
+function validatePostField(field) {
+    const errorEl = document.getElementById(field + '-error');
+    let valid = true;
+    let value = document.getElementById('post-' + field)?.value || '';
+    appState.postForm[field] = value;
+
+    if (field === 'title') {
+        if (!validate.title(value)) {
+            errorEl.textContent = 'Title must be 3-100 characters';
+            valid = false;
+        }
+    } else if (field === 'description') {
+        if (!validate.description(value)) {
+            errorEl.textContent = 'Description must be 10-2000 characters';
+            valid = false;
+        }
+    } else if (field === 'location') {
+        if (!validate.location(value)) {
+            errorEl.textContent = 'Location must be 3-200 characters';
+            valid = false;
+        }
+    } else if (field === 'reward') {
+        if (!validate.reward(value)) {
+            errorEl.textContent = 'Reward must be $0-$10,000';
+            valid = false;
+        }
+    }
+
+    if (valid) errorEl.textContent = '';
+    return valid;
+}
+
+function submitPost() {
+    appState.postForm.title = document.getElementById('post-title')?.value || '';
+    appState.postForm.description = document.getElementById('post-description')?.value || '';
+    appState.postForm.location = document.getElementById('post-location')?.value || '';
+    appState.postForm.reward = document.getElementById('post-reward')?.value || '0';
+    appState.postForm.type = document.getElementById('post-type')?.value || 'lost';
+
+    const titleValid = validatePostField('title');
+    const descValid = validatePostField('description');
+    const locValid = validatePostField('location');
+    const rewValid = validatePostField('reward');
+
+    if (!titleValid || !descValid || !locValid || !rewValid) return;
+    if (!appState.postForm.emoji) {
+        alert('Please select an icon');
+        return;
+    }
+
+    const newItem = {
+        id: Date.now().toString(),
+        userId: appState.currentUser.id,
+        type: appState.postForm.type,
+        title: appState.postForm.title,
+        description: appState.postForm.description,
+        category: appState.postForm.category,
+        location: appState.postForm.location,
+        emoji: appState.postForm.emoji,
+        reward: parseFloat(appState.postForm.reward) || 0,
+        createdAt: new Date().toISOString()
+    };
+
+    db.items.push(newItem);
+    db.saveItems();
+
+    appState.postForm = {};
+    appState.currentPage = 'home';
+    appState.successMessage = '✅ Item posted successfully!';
+    render();
+}
+
+function contactUser(userId, itemId) {
+    alert('Contact feature coming soon! User: ' + userId);
+}
+
+function attachEventListeners() {
+    const emailInput = document.getElementById('auth-email');
+    const passwordInput = document.getElementById('auth-password');
+
+    if (emailInput && appState.authMode === 'login') {
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('authForm')?.dispatchEvent(new Event('submit'));
+        });
+    }
+
+    const titleInput = document.getElementById('post-title');
+    if (titleInput) {
+        titleInput.addEventListener('input', (e) => {
+            appState.postForm.title = e.target.value;
+        });
+    }
+
+    const descInput = document.getElementById('post-description');
+    if (descInput) {
+        descInput.addEventListener('input', (e) => {
+            appState.postForm.description = e.target.value;
+        });
+    }
+}
+
+// ============ INIT ============
+render();
+</script>
+
+</body>
+</html>
