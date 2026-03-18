@@ -186,16 +186,6 @@
             background: #4b5563;
         }
 
-        button.outline {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        button.outline:hover {
-            background: #f0f4ff;
-        }
-
         .divider {
             border: none;
             border-top: 1px solid #ddd;
@@ -305,6 +295,78 @@
             color: #333;
         }
 
+        /* ===== IMAGE UPLOAD ===== */
+        .image-upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            background: #f9f9ff;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .image-upload-area:hover {
+            border-color: #5568d3;
+            background: #f0f4ff;
+        }
+
+        .image-upload-area.dragover {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .upload-subtext {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        #imageInput {
+            display: none;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .remove-image:hover {
+            background: #991b1b;
+        }
+
         /* ===== DASHBOARD ===== */
         .stats-grid {
             display: grid;
@@ -391,9 +453,27 @@
             gap: 1.5rem;
         }
 
+        .item-image {
+            flex-shrink: 0;
+            width: 150px;
+            height: 150px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .item-icon {
             font-size: 3rem;
-            flex-shrink: 0;
+            text-align: center;
         }
 
         .item-content {
@@ -463,21 +543,6 @@
             border-left: 4px solid #10b981;
         }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .app-container {
@@ -499,6 +564,11 @@
             .item-card {
                 flex-direction: column;
             }
+
+            .item-image {
+                width: 100%;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -507,33 +577,30 @@
 <div id="app"></div>
 
 <script>
-// ============ LOCALSTORAGE DATABASE (Real data persistence) ============
+// ============ LOCALSTORAGE DATABASE ============
 const db = {
     users: JSON.parse(localStorage.getItem('lf_users') || '[]'),
     items: JSON.parse(localStorage.getItem('lf_items') || '[]'),
-    messages: JSON.parse(localStorage.getItem('lf_messages') || '[]'),
 
     saveUsers() {
         localStorage.setItem('lf_users', JSON.stringify(this.users));
     },
     saveItems() {
         localStorage.setItem('lf_items', JSON.stringify(this.items));
-    },
-    saveMessages() {
-        localStorage.setItem('lf_messages', JSON.stringify(this.messages));
     }
 };
 
 // ============ APP STATE ============
 let appState = {
     currentPage: 'auth',
-    authMode: 'login', // 'login' or 'signup'
+    authMode: 'login',
     currentUser: localStorage.getItem('lf_currentUser') ? JSON.parse(localStorage.getItem('lf_currentUser')) : null,
     filters: { searchTerm: '', type: 'all', category: 'all' },
-    selectedChat: null,
-    formErrors: {},
     successMessage: '',
-    postForm: {}
+    postForm: {
+        image: null,
+        imagePreview: null
+    }
 };
 
 // ============ VALIDATION ============
@@ -545,8 +612,7 @@ const validate = {
     title: (title) => title.trim().length >= 3 && title.trim().length <= 100,
     description: (desc) => desc.trim().length >= 10 && desc.trim().length <= 2000,
     location: (location) => location.trim().length >= 3 && location.trim().length <= 200,
-    reward: (reward) => !reward || (parseFloat(reward) >= 0 && parseFloat(reward) <= 10000),
-    message: (msg) => msg.trim().length > 0 && msg.trim().length <= 500
+    reward: (reward) => !reward || (parseFloat(reward) >= 0 && parseFloat(reward) <= 10000)
 };
 
 // ============ RENDER FUNCTION ============
@@ -771,7 +837,15 @@ function renderBrowse() {
                 const poster = db.users.find(u => u.id === item.userId);
                 return `
                     <div class="item-card">
-                        <div class="item-icon">${item.emoji}</div>
+                        ${item.image ? `
+                            <div class="item-image">
+                                <img src="${item.image}" alt="${item.title}">
+                            </div>
+                        ` : `
+                            <div class="item-image">
+                                <div class="item-icon">${item.emoji}</div>
+                            </div>
+                        `}
                         <div class="item-content">
                             <div class="item-title">${item.title}</div>
                             <div style="color: #666; margin-bottom: 0.5rem;">📍 ${item.location}</div>
@@ -808,11 +882,28 @@ function renderPost() {
         <h2>Post Item</h2>
         
         <div style="max-width: 600px;">
+            <!-- IMAGE UPLOAD -->
             <div class="form-group">
-                <label>Select Icon</label>
+                <label>Upload Photo (Optional)</label>
+                <div class="image-upload-area" id="uploadArea">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-subtext">PNG, JPG, GIF up to 10MB</div>
+                    <input type="file" id="imageInput" accept="image/*">
+                </div>
+                ${appState.postForm.imagePreview ? `
+                    <div class="image-preview">
+                        <img src="${appState.postForm.imagePreview}" alt="Preview">
+                        <button type="button" class="remove-image" onclick="removeImage()">✕</button>
+                    </div>
+                ` : ''}
+            </div>
+
+            <div class="form-group">
+                <label>Or Select Icon</label>
                 <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 1rem;">
                     ${currentEmojis.map(emoji => `
-                        <button type="button" style="font-size: 1.5rem; padding: 10px; background: ${appState.postForm?.emoji === emoji ? '#667eea' : '#f0f0f0'}; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;"
+                        <button type="button" style="font-size: 1.5rem; padding: 10px; background: ${appState.postForm?.emoji === emoji && !appState.postForm.imagePreview ? '#667eea' : '#f0f0f0'}; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;"
                                 onclick="setPostEmoji('${emoji}')">
                             ${emoji}
                         </button>
@@ -918,7 +1009,15 @@ function renderProfile() {
         ` : `
             ${userItems.map(item => `
                 <div class="item-card">
-                    <div class="item-icon">${item.emoji}</div>
+                    ${item.image ? `
+                        <div class="item-image">
+                            <img src="${item.image}" alt="${item.title}">
+                        </div>
+                    ` : `
+                        <div class="item-image">
+                            <div class="item-icon">${item.emoji}</div>
+                        </div>
+                    `}
                     <div class="item-content">
                         <div class="item-title">${item.title}</div>
                         <div class="item-meta">
@@ -943,7 +1042,6 @@ function handleLogin(e) {
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
 
-    // Reset errors
     document.getElementById('email-error').textContent = '';
     document.getElementById('password-error').textContent = '';
 
@@ -961,7 +1059,6 @@ function handleLogin(e) {
 
     if (hasError) return;
 
-    // Find user
     const user = db.users.find(u => u.email === email && u.password === password);
 
     if (user) {
@@ -982,7 +1079,6 @@ function handleSignup(e) {
     const password = document.getElementById('signup-password').value;
     const confirm = document.getElementById('signup-confirm').value;
 
-    // Reset errors
     ['name', 'email', 'phone', 'password', 'confirm'].forEach(f => {
         const el = document.getElementById(`${f}-error`);
         if (el) el.textContent = '';
@@ -1022,7 +1118,6 @@ function handleSignup(e) {
 
     if (hasError) return;
 
-    // Create user
     const newUser = {
         id: Date.now().toString(),
         name,
@@ -1054,7 +1149,13 @@ function goToPage(page) {
     appState.currentPage = page;
     appState.successMessage = '';
     if (page === 'post') {
-        appState.postForm = { category: 'accessories', type: 'lost', emoji: '👜' };
+        appState.postForm = { 
+            category: 'accessories', 
+            type: 'lost', 
+            emoji: '👜',
+            image: null,
+            imagePreview: null
+        };
     }
     render();
 }
@@ -1124,10 +1225,6 @@ function submitPost() {
     const rewValid = validatePostField('reward');
 
     if (!titleValid || !descValid || !locValid || !rewValid) return;
-    if (!appState.postForm.emoji) {
-        alert('Please select an icon');
-        return;
-    }
 
     const newItem = {
         id: Date.now().toString(),
@@ -1138,6 +1235,7 @@ function submitPost() {
         category: appState.postForm.category,
         location: appState.postForm.location,
         emoji: appState.postForm.emoji,
+        image: appState.postForm.imagePreview,
         reward: parseFloat(appState.postForm.reward) || 0,
         createdAt: new Date().toISOString()
     };
@@ -1155,14 +1253,56 @@ function contactUser(userId, itemId) {
     alert('Contact feature coming soon! User: ' + userId);
 }
 
-function attachEventListeners() {
-    const emailInput = document.getElementById('auth-email');
-    const passwordInput = document.getElementById('auth-password');
+function removeImage() {
+    appState.postForm.image = null;
+    appState.postForm.imagePreview = null;
+    render();
+}
 
-    if (emailInput && appState.authMode === 'login') {
-        emailInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('authForm')?.dispatchEvent(new Event('submit'));
+function handleImageUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        appState.postForm.image = event.target.result;
+        appState.postForm.imagePreview = event.target.result;
+        render();
+    };
+    reader.readAsDataURL(file);
+}
+
+function attachEventListeners() {
+    const uploadArea = document.getElementById('uploadArea');
+    const imageInput = document.getElementById('imageInput');
+
+    if (uploadArea) {
+        uploadArea.addEventListener('click', () => imageInput?.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
         });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer?.files;
+            if (files?.[0]) {
+                imageInput.files = files;
+                handleImageUpload({ target: imageInput });
+            }
+        });
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', handleImageUpload);
     }
 
     const titleInput = document.getElementById('post-title');
