@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost & Found Connect</title>
+    <title>Lost & Found Connect - Real App</title>
     <style>
         * {
             margin: 0;
@@ -54,16 +54,25 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
+            gap: 15px;
         }
 
-        .user-avatar {
-            font-size: 1.5rem;
+        .user-details {
+            text-align: right;
         }
 
-        /* ===== LOGIN PAGE ===== */
-        .login-page {
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .user-email {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* ===== AUTH PAGES ===== */
+        .auth-container {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -71,38 +80,38 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .login-box {
+        .auth-box {
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
         }
 
-        .login-header {
+        .auth-header {
             text-align: center;
             margin-bottom: 2rem;
         }
 
-        .login-icon {
+        .auth-icon {
             font-size: 3rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
 
-        .login-title {
+        .auth-title {
             font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
 
-        .login-subtitle {
+        .auth-subtitle {
             color: #666;
             font-size: 0.9rem;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         label {
@@ -114,10 +123,10 @@
 
         input, select, textarea {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.85rem;
             border: 1px solid #ddd;
             border-radius: 6px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-family: inherit;
             transition: border-color 0.3s;
         }
@@ -128,25 +137,27 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        input.error {
+        input.error, textarea.error {
             border-color: #dc2626;
         }
 
         .error-text {
             color: #dc2626;
             font-size: 0.8rem;
-            margin-top: 0.25rem;
+            margin-top: 0.3rem;
+            display: block;
         }
 
         .char-count {
             color: #999;
             font-size: 0.8rem;
-            margin-top: 0.25rem;
+            margin-top: 0.3rem;
+            display: block;
         }
 
         button {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.85rem;
             background: #667eea;
             color: white;
             border: none;
@@ -162,6 +173,11 @@
             background: #5568d3;
         }
 
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
         button.secondary {
             background: #6b7280;
         }
@@ -170,24 +186,42 @@
             background: #4b5563;
         }
 
+        button.outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        button.outline:hover {
+            background: #f0f4ff;
+        }
+
         .divider {
             border: none;
             border-top: 1px solid #ddd;
             margin: 1.5rem 0;
         }
 
-        .demo-accounts {
+        .auth-footer {
             text-align: center;
             margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #eee;
         }
 
-        .demo-label {
+        .auth-footer p {
             color: #666;
             font-size: 0.9rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-footer a, .toggle-auth {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-footer a:hover, .toggle-auth:hover {
+            text-decoration: underline;
         }
 
         /* ===== MAIN APP ===== */
@@ -198,7 +232,6 @@
             margin-bottom: 2rem;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             background: white;
             padding: 1.5rem;
@@ -244,9 +277,14 @@
             background: #dc2626;
             color: white;
             margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
         }
 
-        /* ===== MAIN CONTENT ===== */
+        .logout-btn:hover {
+            background: #991b1b;
+        }
+
         .main-content {
             background: white;
             padding: 2rem;
@@ -260,6 +298,11 @@
 
         .page.active {
             display: block;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
         }
 
         /* ===== DASHBOARD ===== */
@@ -316,16 +359,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .btn-post-found {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
         .btn-browse {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-
-        .btn-messages {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
 
         /* ===== ITEMS ===== */
@@ -371,23 +406,11 @@
             margin-bottom: 0.5rem;
         }
 
-        .item-location {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .item-description {
-            color: #777;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
         .item-meta {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
-            margin-bottom: 1rem;
+            margin: 1rem 0;
         }
 
         .badge {
@@ -407,11 +430,6 @@
         .badge.found {
             background: #dcfce7;
             color: #15803d;
-        }
-
-        .badge.reward {
-            background: #dbeafe;
-            color: #1e40af;
         }
 
         .contact-button {
@@ -435,180 +453,29 @@
             margin-bottom: 1rem;
         }
 
-        /* ===== MESSAGES ===== */
-        .messages-container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 1rem;
-            min-height: 500px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .users-list {
-            background: #f9f9f9;
-            border-right: 1px solid #e0e0e0;
-            overflow-y: auto;
+        /* ===== SUCCESS MESSAGE ===== */
+        .success-message {
+            background: #dcfce7;
+            color: #15803d;
             padding: 1rem;
-        }
-
-        .user-item {
-            padding: 0.75rem;
-            background: white;
-            border: 1px solid #e0e0e0;
             border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .user-item:hover {
-            background: #f0f0f0;
-        }
-
-        .user-item.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .user-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .user-email {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .chat-area {
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
-        }
-
-        .chat-header {
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 1rem;
             margin-bottom: 1rem;
+            border-left: 4px solid #10b981;
         }
 
-        .messages-list {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 1rem;
-            padding: 1rem 0;
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .message {
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .message.sent {
-            justify-content: flex-end;
-        }
-
-        .message-content {
-            max-width: 60%;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            word-wrap: break-word;
-        }
-
-        .message.sent .message-content {
-            background: #667eea;
-            color: white;
-        }
-
-        .message.received .message-content {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .message-time {
-            font-size: 0.75rem;
-            color: #999;
-            margin-top: 0.25rem;
-        }
-
-        .message-input-area {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .message-input-area textarea {
-            flex: 1;
-            resize: none;
-            height: 60px;
-        }
-
-        .message-input-area button {
-            flex-shrink: 0;
-            width: auto;
-            padding: 0.75rem 1rem;
-            margin: 0;
-        }
-
-        .no-selection {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-        }
-
-        /* ===== PROFILE ===== */
-        .profile-header {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f9f9f9;
-            border-radius: 8px;
-        }
-
-        .profile-avatar {
-            font-size: 4rem;
-        }
-
-        .profile-info h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-info p {
-            color: #666;
-            margin-bottom: 0.25rem;
-            font-size: 0.95rem;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .profile-stat {
-            background: #f9f9f9;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .profile-stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .profile-stat-label {
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* ===== RESPONSIVE ===== */
@@ -621,29 +488,16 @@
                 display: none;
             }
 
-            .messages-container {
-                grid-template-columns: 1fr;
-            }
-
-            .users-list {
-                display: none;
-            }
-
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .message-content {
-                max-width: 80%;
-            }
-
-            header {
-                margin-bottom: 1rem;
+            .auth-box {
+                padding: 1.5rem;
             }
 
             .main-content {
                 padding: 1rem;
+            }
+
+            .item-card {
+                flex-direction: column;
             }
         }
     </style>
@@ -653,44 +507,54 @@
 <div id="app"></div>
 
 <script>
-// ============ APPLICATION STATE ============
-let appState = {
-    currentPage: 'login',
-    currentUser: null,
-    users: [
-        { id: '1', email: 'john@example.com', password: 'password123', name: 'John Doe', phone: '+1234567890', avatar: '👨', rating: 4.5, reviews: 2 },
-        { id: '2', email: 'jane@example.com', password: 'password123', name: 'Jane Smith', phone: '+1987654321', avatar: '👩', rating: 5, reviews: 1 }
-    ],
-    items: [
-        { id: '1', userId: '1', type: 'lost', title: 'Blue Wallet', description: 'Navy blue leather wallet with driving license inside. Please help!', category: 'accessories', photo: '👜', location: 'Downtown Coffee Shop', reward: 50, createdAt: new Date(Date.now() - 3600000), userName: 'John Doe' },
-        { id: '2', userId: '2', type: 'found', title: 'iPhone 14 Pro', description: 'Found at bus station. Good condition, slightly cracked screen protector.', category: 'electronics', photo: '📱', location: 'Central Bus Station', reward: 0, createdAt: new Date(Date.now() - 7200000), userName: 'Jane Smith' },
-        { id: '3', userId: '1', type: 'found', title: 'Silver Keychain', description: 'Found with 3 keys attached. Cute rainbow charm attached.', category: 'accessories', photo: '🔑', location: 'Park Bench', reward: 0, createdAt: new Date(Date.now() - 1800000), userName: 'John Doe' }
-    ],
-    messages: [
-        { id: '1', senderId: '1', receiverId: '2', itemId: '1', message: 'Hi, did you find a blue wallet?', timestamp: new Date(Date.now() - 1800000) }
-    ],
-    filters: { searchTerm: '', type: 'all', category: 'all' },
-    selectedChat: null,
-    messageInput: '',
-    formErrors: {}
+// ============ LOCALSTORAGE DATABASE (Real data persistence) ============
+const db = {
+    users: JSON.parse(localStorage.getItem('lf_users') || '[]'),
+    items: JSON.parse(localStorage.getItem('lf_items') || '[]'),
+    messages: JSON.parse(localStorage.getItem('lf_messages') || '[]'),
+
+    saveUsers() {
+        localStorage.setItem('lf_users', JSON.stringify(this.users));
+    },
+    saveItems() {
+        localStorage.setItem('lf_items', JSON.stringify(this.items));
+    },
+    saveMessages() {
+        localStorage.setItem('lf_messages', JSON.stringify(this.messages));
+    }
 };
 
-// ============ VALIDATION FUNCTIONS ============
-const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validatePassword = (password) => password.length >= 6;
-const validatePhone = (phone) => /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(phone.replace(/\s/g, ''));
-const validatePostTitle = (title) => title.trim().length >= 3 && title.trim().length <= 100;
-const validatePostDescription = (desc) => desc.trim().length >= 10 && desc.trim().length <= 2000;
-const validateLocation = (location) => location.trim().length >= 3 && location.trim().length <= 200;
-const validateReward = (reward) => !reward || (parseFloat(reward) >= 0 && parseFloat(reward) <= 10000);
-const validateMessage = (msg) => msg.trim().length > 0 && msg.trim().length <= 500;
+// ============ APP STATE ============
+let appState = {
+    currentPage: 'auth',
+    authMode: 'login', // 'login' or 'signup'
+    currentUser: localStorage.getItem('lf_currentUser') ? JSON.parse(localStorage.getItem('lf_currentUser')) : null,
+    filters: { searchTerm: '', type: 'all', category: 'all' },
+    selectedChat: null,
+    formErrors: {},
+    successMessage: '',
+    postForm: {}
+};
+
+// ============ VALIDATION ============
+const validate = {
+    email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    password: (password) => password.length >= 6,
+    phone: (phone) => /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(phone.replace(/\s/g, '')),
+    name: (name) => name.trim().length >= 3,
+    title: (title) => title.trim().length >= 3 && title.trim().length <= 100,
+    description: (desc) => desc.trim().length >= 10 && desc.trim().length <= 2000,
+    location: (location) => location.trim().length >= 3 && location.trim().length <= 200,
+    reward: (reward) => !reward || (parseFloat(reward) >= 0 && parseFloat(reward) <= 10000),
+    message: (msg) => msg.trim().length > 0 && msg.trim().length <= 500
+};
 
 // ============ RENDER FUNCTION ============
 function render() {
     const app = document.getElementById('app');
     
-    if (appState.currentPage === 'login') {
-        app.innerHTML = renderLogin();
+    if (!appState.currentUser) {
+        app.innerHTML = renderAuth();
     } else {
         app.innerHTML = renderApp();
     }
@@ -698,50 +562,91 @@ function render() {
     attachEventListeners();
 }
 
-// ============ LOGIN PAGE ============
-function renderLogin() {
+// ============ AUTH PAGE ============
+function renderAuth() {
     return `
-        <div class="login-page">
-            <div class="login-box">
-                <div class="login-header">
-                    <div class="login-icon">🔍</div>
-                    <h1 class="login-title">Lost & Found</h1>
-                    <p class="login-subtitle">Reunite lost items with their owners</p>
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <div class="auth-icon">🔍</div>
+                    <h1 class="auth-title">${appState.authMode === 'login' ? 'Welcome Back' : 'Join Us'}</h1>
+                    <p class="auth-subtitle">${appState.authMode === 'login' ? 'Sign in to your account' : 'Create a new account'}</p>
                 </div>
-                
-                <form id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="login-email" placeholder="you@example.com" required>
-                        <span class="error-text" id="email-error"></span>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="login-password" placeholder="••••••" required>
-                        <span class="error-text" id="password-error"></span>
-                    </div>
-                    
-                    <button type="submit">Sign In</button>
-                </form>
-                
-                <div class="demo-accounts">
-                    <p class="demo-label">Demo Accounts:</p>
-                    <button type="button" class="secondary" onclick="demoLogin('john@example.com')">👨 John (password123)</button>
-                    <button type="button" class="secondary" onclick="demoLogin('jane@example.com')">👩 Jane (password123)</button>
+
+                ${renderAuthForm()}
+
+                <div class="auth-footer">
+                    <p>${appState.authMode === 'login' ? "Don't have an account?" : 'Already have an account?'} <span class="toggle-auth" onclick="toggleAuthMode()">${appState.authMode === 'login' ? 'Sign up' : 'Sign in'}</span></p>
                 </div>
             </div>
         </div>
     `;
 }
 
+function renderAuthForm() {
+    if (appState.authMode === 'login') {
+        return `
+            <form id="authForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="auth-email" placeholder="you@example.com" required>
+                    <span class="error-text" id="email-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••" required>
+                    <span class="error-text" id="password-error"></span>
+                </div>
+                
+                <button type="submit">Sign In</button>
+            </form>
+        `;
+    } else {
+        return `
+            <form id="authForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe" required>
+                    <span class="error-text" id="name-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                    <span class="error-text" id="email-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="signup-phone" placeholder="+1234567890" required>
+                    <span class="error-text" id="phone-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Min 6 characters" required>
+                    <span class="error-text" id="password-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="••••••" required>
+                    <span class="error-text" id="confirm-error"></span>
+                </div>
+                
+                <button type="submit">Create Account</button>
+            </form>
+        `;
+    }
+}
+
 // ============ MAIN APP ============
 function renderApp() {
-    const userItems = appState.items.filter(i => i.userId === appState.currentUser.id);
+    const userItems = db.items.filter(i => i.userId === appState.currentUser.id);
     const lostCount = userItems.filter(i => i.type === 'lost').length;
     const foundCount = userItems.filter(i => i.type === 'found').length;
-    const msgCount = appState.messages.filter(m => m.senderId === appState.currentUser.id || m.receiverId === appState.currentUser.id).length;
-    
+
     return `
         <header>
             <div class="header-content">
@@ -750,8 +655,11 @@ function renderApp() {
                     <span>Lost & Found</span>
                 </div>
                 <div class="user-info">
-                    <span class="user-avatar">${appState.currentUser.avatar}</span>
-                    <span>${appState.currentUser.name}</span>
+                    <div class="user-details">
+                        <div class="user-name">${appState.currentUser.name}</div>
+                        <div class="user-email">${appState.currentUser.email}</div>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()" style="width: auto; margin: 0; padding: 0.5rem 1rem;">🚪 Logout</button>
                 </div>
             </div>
         </header>
@@ -763,20 +671,19 @@ function renderApp() {
                     <h3>Navigation</h3>
                     <div class="nav-buttons">
                         <button class="nav-button ${appState.currentPage === 'home' ? 'active' : ''}" onclick="goToPage('home')">🏠 Dashboard</button>
-                        <button class="nav-button ${appState.currentPage === 'browse' ? 'active' : ''}" onclick="goToPage('browse')">🔎 Browse Items</button>
+                        <button class="nav-button ${appState.currentPage === 'browse' ? 'active' : ''}" onclick="goToPage('browse')">🔎 Browse</button>
                         <button class="nav-button ${appState.currentPage === 'post' ? 'active' : ''}" onclick="goToPage('post')">➕ Post Item</button>
-                        <button class="nav-button ${appState.currentPage === 'messages' ? 'active' : ''}" onclick="goToPage('messages')">💬 Messages</button>
                         <button class="nav-button ${appState.currentPage === 'profile' ? 'active' : ''}" onclick="goToPage('profile')">👤 Profile</button>
-                        <button class="nav-button logout-btn" onclick="handleLogout()">🚪 Logout</button>
                     </div>
                 </div>
 
                 <!-- MAIN CONTENT -->
                 <div class="main-content">
-                    ${appState.currentPage === 'home' ? renderHome(lostCount, foundCount, msgCount) : ''}
+                    ${appState.successMessage ? `<div class="success-message">${appState.successMessage}</div>` : ''}
+                    
+                    ${appState.currentPage === 'home' ? renderHome(lostCount, foundCount) : ''}
                     ${appState.currentPage === 'browse' ? renderBrowse() : ''}
                     ${appState.currentPage === 'post' ? renderPost() : ''}
-                    ${appState.currentPage === 'messages' ? renderMessages() : ''}
                     ${appState.currentPage === 'profile' ? renderProfile() : ''}
                 </div>
             </div>
@@ -784,43 +691,44 @@ function renderApp() {
     `;
 }
 
-// ============ DASHBOARD PAGE ============
-function renderHome(lostCount, foundCount, msgCount) {
+// ============ DASHBOARD ============
+function renderHome(lostCount, foundCount) {
+    const allItems = db.items.length;
+    
     return `
         <h2>Dashboard</h2>
         <div class="stats-grid">
             <div class="stat-box">
                 <div class="stat-number">${lostCount}</div>
-                <div class="stat-label">Lost Items Posted</div>
+                <div class="stat-label">Your Lost Items</div>
             </div>
             <div class="stat-box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                 <div class="stat-number">${foundCount}</div>
-                <div class="stat-label">Found Items Reported</div>
+                <div class="stat-label">Your Found Items</div>
             </div>
-            <div class="stat-box" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
-                <div class="stat-number">${msgCount}</div>
-                <div class="stat-label">Active Conversations</div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="stat-number">${allItems}</div>
+                <div class="stat-label">Total Items</div>
             </div>
         </div>
 
-        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Quick Actions</h3>
+        <h3 style="margin: 2rem 0 1rem;">Quick Actions</h3>
         <div class="quick-actions">
             <button class="action-button btn-post-lost" onclick="goToPage('post')">📌 Post Lost Item</button>
-            <button class="action-button btn-post-found" onclick="goToPage('post')">✅ Post Found Item</button>
             <button class="action-button btn-browse" onclick="goToPage('browse')">🔎 Browse Items</button>
-            <button class="action-button btn-messages" onclick="goToPage('messages')">💬 Messages</button>
         </div>
     `;
 }
 
-// ============ BROWSE PAGE ============
+// ============ BROWSE ITEMS ============
 function renderBrowse() {
-    const filtered = appState.items.filter(i => i.userId !== appState.currentUser.id &&
+    const filtered = db.items.filter(i => 
         (appState.filters.type === 'all' || i.type === appState.filters.type) &&
         (appState.filters.category === 'all' || i.category === appState.filters.category) &&
         (i.title.toLowerCase().includes(appState.filters.searchTerm.toLowerCase()) ||
-         i.description.toLowerCase().includes(appState.filters.searchTerm.toLowerCase())));
-    
+         i.description.toLowerCase().includes(appState.filters.searchTerm.toLowerCase()))
+    );
+
     return `
         <h2>Browse Items</h2>
         
@@ -847,7 +755,6 @@ function renderBrowse() {
                     <option value="documents">Documents</option>
                     <option value="clothing">Clothing</option>
                     <option value="keys">Keys</option>
-                    <option value="other">Other</option>
                 </select>
             </div>
         </div>
@@ -857,43 +764,45 @@ function renderBrowse() {
         ${filtered.length === 0 ? `
             <div class="empty-state">
                 <div class="empty-icon">🔍</div>
-                <p>No items found matching your criteria</p>
+                <p>No items found</p>
             </div>
         ` : `
-            ${filtered.map(item => `
-                <div class="item-card">
-                    <div class="item-icon">${item.photo}</div>
-                    <div class="item-content">
-                        <div class="item-title">${item.title}</div>
-                        <div class="item-location">📍 ${item.location}</div>
-                        <div class="item-description">${item.description.substring(0, 150)}...</div>
-                        <div class="item-meta">
-                            <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
-                            <span class="badge">${item.category}</span>
-                            ${item.reward > 0 ? `<span class="badge reward">💰 $${item.reward}</span>` : ''}
-                            <span class="badge">${item.userName}</span>
+            ${filtered.map(item => {
+                const poster = db.users.find(u => u.id === item.userId);
+                return `
+                    <div class="item-card">
+                        <div class="item-icon">${item.emoji}</div>
+                        <div class="item-content">
+                            <div class="item-title">${item.title}</div>
+                            <div style="color: #666; margin-bottom: 0.5rem;">📍 ${item.location}</div>
+                            <div style="color: #777; margin-bottom: 1rem;">${item.description}</div>
+                            <div class="item-meta">
+                                <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
+                                <span class="badge">${item.category}</span>
+                                ${item.reward > 0 ? `<span class="badge">💰 $${item.reward}</span>` : ''}
+                                <span class="badge">By: ${poster?.name || 'Unknown'}</span>
+                            </div>
+                            ${item.userId !== appState.currentUser.id ? `<button class="contact-button" onclick="contactUser('${item.userId}', '${item.id}')">💬 Contact</button>` : ''}
                         </div>
-                        <button class="contact-button" onclick="startChat('${item.userId}')">💬 Contact</button>
                     </div>
-                </div>
-            `).join('')}
+                `;
+            }).join('')}
         `}
     `;
 }
 
-// ============ POST ITEM PAGE ============
+// ============ POST ITEM ============
 function renderPost() {
-    const categories = ['accessories', 'electronics', 'documents', 'clothing', 'keys', 'other'];
-    const photos = {
-        accessories: ['👜', '⌚', '🎒', '👓'],
-        electronics: ['📱', '💻', '⌨️', '📷'],
-        documents: ['📄', '🪪', '📚', '📋'],
-        clothing: ['👕', '👖', '👔', '🧥'],
-        keys: ['🔑', '🗝️'],
-        other: ['📦', '🎁', '💼']
+    const categories = ['accessories', 'electronics', 'documents', 'clothing', 'keys'];
+    const emojis = {
+        accessories: ['👜', '⌚', '🎒', '👓', '🧣'],
+        electronics: ['📱', '💻', '⌨️', '📷', '🎧'],
+        documents: ['📄', '🪪', '📚', '📋', '🎫'],
+        clothing: ['👕', '👖', '👔', '🧥', '👗'],
+        keys: ['🔑', '🗝️', '🏠']
     };
 
-    const currentPhotos = photos[appState.postForm?.category || 'accessories'] || photos.accessories;
+    const currentEmojis = emojis[appState.postForm?.category || 'accessories'] || emojis.accessories;
 
     return `
         <h2>Post Item</h2>
@@ -901,14 +810,22 @@ function renderPost() {
         <div style="max-width: 600px;">
             <div class="form-group">
                 <label>Select Icon</label>
-                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 1rem;">
-                    ${currentPhotos.map(emoji => `
-                        <button type="button" style="font-size: 1.5rem; padding: 10px; background: ${appState.postForm?.photo === emoji ? '#667eea' : '#f0f0f0'}; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;"
-                                onclick="setPostPhoto('${emoji}')">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 1rem;">
+                    ${currentEmojis.map(emoji => `
+                        <button type="button" style="font-size: 1.5rem; padding: 10px; background: ${appState.postForm?.emoji === emoji ? '#667eea' : '#f0f0f0'}; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;"
+                                onclick="setPostEmoji('${emoji}')">
                             ${emoji}
                         </button>
                     `).join('')}
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label>Type</label>
+                <select id="post-type" onchange="updatePostField('type', this.value)">
+                    <option value="lost">Lost Item</option>
+                    <option value="found">Found Item</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -924,9 +841,7 @@ function renderPost() {
             <div class="form-group">
                 <label>Category</label>
                 <select id="post-category" onchange="updatePostCategory(this.value)">
-                    ${categories.map(cat => `
-                        <option value="${cat}" ${appState.postForm?.category === cat ? 'selected' : ''}>${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
-                    `).join('')}
+                    ${categories.map(cat => `<option value="${cat}" ${appState.postForm?.category === cat ? 'selected' : ''}>${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>`).join('')}
                 </select>
             </div>
 
@@ -949,7 +864,7 @@ function renderPost() {
             </div>
 
             <div class="form-group">
-                <label>Reward Amount (Optional)</label>
+                <label>Reward Amount (Optional - for lost items)</label>
                 <input type="number" id="post-reward" placeholder="0" min="0" max="10000"
                        value="${appState.postForm?.reward || ''}"
                        onchange="validatePostField('reward')"
@@ -965,94 +880,33 @@ function renderPost() {
     `;
 }
 
-// ============ MESSAGES PAGE ============
-function renderMessages() {
-    const userMessages = appState.messages.filter(m => m.senderId === appState.currentUser.id || m.receiverId === appState.currentUser.id);
-    const uniqueUsers = [...new Set(userMessages.map(m => m.senderId === appState.currentUser.id ? m.receiverId : m.senderId))];
-    const selectedMessages = appState.selectedChat ? appState.messages.filter(m => 
-        (m.senderId === appState.currentUser.id && m.receiverId === appState.selectedChat) ||
-        (m.senderId === appState.selectedChat && m.receiverId === appState.currentUser.id)
-    ) : [];
-
-    return `
-        <h2>Messages</h2>
-        <div class="messages-container">
-            <div class="users-list">
-                ${uniqueUsers.length === 0 ? '<p style="color: #999;">No conversations</p>' : ''}
-                ${uniqueUsers.map(uid => {
-                    const u = appState.users.find(x => x.id === uid);
-                    return `
-                        <div class="user-item ${appState.selectedChat === uid ? 'active' : ''}" onclick="selectChat('${uid}')">
-                            <div class="user-name">${u.avatar} ${u.name}</div>
-                            <div class="user-email">${u.email}</div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-
-            <div class="chat-area">
-                ${appState.selectedChat ? `
-                    <div class="chat-header">
-                        <div class="user-name">${appState.users.find(u => u.id === appState.selectedChat)?.name}</div>
-                    </div>
-                    <div class="messages-list" id="messages-list">
-                        ${selectedMessages.length === 0 ? '<p style="text-align: center; color: #999; margin-top: auto;">No messages yet</p>' : ''}
-                        ${selectedMessages.map(msg => `
-                            <div class="message ${msg.senderId === appState.currentUser.id ? 'sent' : 'received'}">
-                                <div class="message-content">
-                                    ${msg.message}
-                                    <div class="message-time">${msg.timestamp.toLocaleTimeString()}</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="message-input-area">
-                        <textarea id="message-input" placeholder="Type a message..." maxlength="500"
-                                 value="${appState.messageInput}"
-                                 onchange="appState.messageInput = this.value"
-                                 onkeyup="appState.messageInput = this.value"></textarea>
-                        <button onclick="sendMessage()">Send</button>
-                    </div>
-                ` : `
-                    <div class="no-selection">Select a conversation to start messaging</div>
-                `}
-            </div>
-        </div>
-    `;
-}
-
-// ============ PROFILE PAGE ============
+// ============ PROFILE ============
 function renderProfile() {
-    const userItems = appState.items.filter(i => i.userId === appState.currentUser.id);
-    
+    const userItems = db.items.filter(i => i.userId === appState.currentUser.id);
+    const lostCount = userItems.filter(i => i.type === 'lost').length;
+    const foundCount = userItems.filter(i => i.type === 'found').length;
+
     return `
-        <h2>Profile</h2>
+        <h2>Your Profile</h2>
         
-        <div class="profile-header">
-            <div class="profile-avatar">${appState.currentUser.avatar}</div>
-            <div class="profile-info">
-                <h2>${appState.currentUser.name}</h2>
-                <p>📧 ${appState.currentUser.email}</p>
-                <p>📞 ${appState.currentUser.phone}</p>
-            </div>
+        <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h3>${appState.currentUser.name}</h3>
+            <p style="color: #666; margin-bottom: 0.5rem;">📧 ${appState.currentUser.email}</p>
+            <p style="color: #666;">📞 ${appState.currentUser.phone}</p>
         </div>
 
-        <div class="profile-stats">
-            <div class="profile-stat">
-                <div class="profile-stat-number">${userItems.length}</div>
-                <div class="profile-stat-label">Items Posted</div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">${userItems.length}</div>
+                <div class="stat-label">Items Posted</div>
             </div>
-            <div class="profile-stat">
-                <div class="profile-stat-number">${appState.currentUser.rating}</div>
-                <div class="profile-stat-label">Rating</div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="stat-number">${foundCount}</div>
+                <div class="stat-label">Found Items</div>
             </div>
-            <div class="profile-stat">
-                <div class="profile-stat-number">${appState.currentUser.reviews}</div>
-                <div class="profile-stat-label">Reviews</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-number">✅</div>
-                <div class="profile-stat-label">Verified</div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="stat-number">${lostCount}</div>
+                <div class="stat-label">Lost Items</div>
             </div>
         </div>
 
@@ -1064,12 +918,12 @@ function renderProfile() {
         ` : `
             ${userItems.map(item => `
                 <div class="item-card">
-                    <div class="item-icon">${item.photo}</div>
+                    <div class="item-icon">${item.emoji}</div>
                     <div class="item-content">
                         <div class="item-title">${item.title}</div>
-                        <div class="item-location">📍 ${item.location}</div>
-                        <div style="margin-top: 0.5rem;">
+                        <div class="item-meta">
                             <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
+                            <span class="badge">${new Date(item.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
                 </div>
@@ -1078,64 +932,129 @@ function renderProfile() {
     `;
 }
 
-// ============ EVENT HANDLERS ============
+// ============ AUTH HANDLERS ============
+function toggleAuthMode() {
+    appState.authMode = appState.authMode === 'login' ? 'signup' : 'login';
+    render();
+}
+
 function handleLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+
+    // Reset errors
     document.getElementById('email-error').textContent = '';
     document.getElementById('password-error').textContent = '';
-    
+
     let hasError = false;
-    
-    if (!validateEmail(email)) {
-        document.getElementById('email-error').textContent = 'Please enter a valid email address';
+
+    if (!validate.email(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email';
         hasError = true;
     }
-    
-    if (!validatePassword(password)) {
+
+    if (!validate.password(password)) {
         document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
         hasError = true;
     }
-    
+
     if (hasError) return;
-    
-    const user = appState.users.find(u => u.email === email && u.password === password);
-    
+
+    // Find user
+    const user = db.users.find(u => u.email === email && u.password === password);
+
     if (user) {
         appState.currentUser = user;
         appState.currentPage = 'home';
-        appState.postForm = {};
+        localStorage.setItem('lf_currentUser', JSON.stringify(user));
         render();
     } else {
         document.getElementById('email-error').textContent = 'Invalid email or password';
     }
 }
 
-function demoLogin(email) {
-    const user = appState.users.find(u => u.email === email);
-    if (user) {
-        appState.currentUser = user;
-        appState.currentPage = 'home';
-        appState.postForm = {};
-        render();
+function handleSignup(e) {
+    e.preventDefault();
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const phone = document.getElementById('signup-phone').value;
+    const password = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+
+    // Reset errors
+    ['name', 'email', 'phone', 'password', 'confirm'].forEach(f => {
+        const el = document.getElementById(`${f}-error`);
+        if (el) el.textContent = '';
+    });
+
+    let hasError = false;
+
+    if (!validate.name(name)) {
+        document.getElementById('name-error').textContent = 'Name must be at least 3 characters';
+        hasError = true;
     }
+
+    if (!validate.email(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email';
+        hasError = true;
+    }
+
+    if (db.users.some(u => u.email === email)) {
+        document.getElementById('email-error').textContent = 'Email already registered';
+        hasError = true;
+    }
+
+    if (!validate.phone(phone)) {
+        document.getElementById('phone-error').textContent = 'Please enter a valid phone number';
+        hasError = true;
+    }
+
+    if (!validate.password(password)) {
+        document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
+        hasError = true;
+    }
+
+    if (password !== confirm) {
+        document.getElementById('confirm-error').textContent = 'Passwords do not match';
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+    // Create user
+    const newUser = {
+        id: Date.now().toString(),
+        name,
+        email,
+        phone,
+        password
+    };
+
+    db.users.push(newUser);
+    db.saveUsers();
+
+    appState.currentUser = newUser;
+    appState.currentPage = 'home';
+    appState.authMode = 'login';
+    localStorage.setItem('lf_currentUser', JSON.stringify(newUser));
+    render();
 }
 
 function handleLogout() {
     appState.currentUser = null;
-    appState.currentPage = 'login';
-    appState.filters = { searchTerm: '', type: 'all', category: 'all' };
-    appState.selectedChat = null;
-    appState.postForm = {};
+    appState.currentPage = 'auth';
+    appState.authMode = 'login';
+    localStorage.removeItem('lf_currentUser');
     render();
 }
 
+// ============ APP HANDLERS ============
 function goToPage(page) {
     appState.currentPage = page;
+    appState.successMessage = '';
     if (page === 'post') {
-        appState.postForm = { category: 'accessories', photo: '👜' };
+        appState.postForm = { category: 'accessories', type: 'lost', emoji: '👜' };
     }
     render();
 }
@@ -1145,173 +1064,123 @@ function updateFilter(key, value) {
     render();
 }
 
-function setPostPhoto(emoji) {
-    if (!appState.postForm) appState.postForm = {};
-    appState.postForm.photo = emoji;
+function setPostEmoji(emoji) {
+    appState.postForm.emoji = emoji;
     render();
 }
 
 function updatePostCategory(value) {
-    if (!appState.postForm) appState.postForm = {};
     appState.postForm.category = value;
     render();
 }
 
+function updatePostField(field, value) {
+    appState.postForm[field] = value;
+    render();
+}
+
 function validatePostField(field) {
-    if (!appState.postForm) appState.postForm = {};
     const errorEl = document.getElementById(field + '-error');
     let valid = true;
     let value = document.getElementById('post-' + field)?.value || '';
     appState.postForm[field] = value;
-    
+
     if (field === 'title') {
-        if (!validatePostTitle(value)) {
-            errorEl.textContent = 'Title must be between 3 and 100 characters';
+        if (!validate.title(value)) {
+            errorEl.textContent = 'Title must be 3-100 characters';
             valid = false;
         }
     } else if (field === 'description') {
-        if (!validatePostDescription(value)) {
-            errorEl.textContent = 'Description must be between 10 and 2000 characters';
+        if (!validate.description(value)) {
+            errorEl.textContent = 'Description must be 10-2000 characters';
             valid = false;
         }
     } else if (field === 'location') {
-        if (!validateLocation(value)) {
-            errorEl.textContent = 'Location must be between 3 and 200 characters';
+        if (!validate.location(value)) {
+            errorEl.textContent = 'Location must be 3-200 characters';
             valid = false;
         }
     } else if (field === 'reward') {
-        if (!validateReward(value)) {
-            errorEl.textContent = 'Reward must be a number between 0 and 10000';
+        if (!validate.reward(value)) {
+            errorEl.textContent = 'Reward must be $0-$10,000';
             valid = false;
         }
     }
-    
-    if (valid && errorEl) errorEl.textContent = '';
+
+    if (valid) errorEl.textContent = '';
     return valid;
 }
 
 function submitPost() {
-    if (!appState.postForm) appState.postForm = {};
     appState.postForm.title = document.getElementById('post-title')?.value || '';
     appState.postForm.description = document.getElementById('post-description')?.value || '';
     appState.postForm.location = document.getElementById('post-location')?.value || '';
     appState.postForm.reward = document.getElementById('post-reward')?.value || '0';
-    
+    appState.postForm.type = document.getElementById('post-type')?.value || 'lost';
+
     const titleValid = validatePostField('title');
     const descValid = validatePostField('description');
     const locValid = validatePostField('location');
     const rewValid = validatePostField('reward');
-    
+
     if (!titleValid || !descValid || !locValid || !rewValid) return;
-    
+    if (!appState.postForm.emoji) {
+        alert('Please select an icon');
+        return;
+    }
+
     const newItem = {
         id: Date.now().toString(),
         userId: appState.currentUser.id,
-        type: 'lost',
+        type: appState.postForm.type,
         title: appState.postForm.title,
         description: appState.postForm.description,
         category: appState.postForm.category,
         location: appState.postForm.location,
-        photo: appState.postForm.photo,
+        emoji: appState.postForm.emoji,
         reward: parseFloat(appState.postForm.reward) || 0,
-        createdAt: new Date(),
-        userName: appState.currentUser.name
+        createdAt: new Date().toISOString()
     };
-    
-    appState.items.push(newItem);
+
+    db.items.push(newItem);
+    db.saveItems();
+
     appState.postForm = {};
     appState.currentPage = 'home';
-    alert('Item posted successfully!');
+    appState.successMessage = '✅ Item posted successfully!';
     render();
 }
 
-function startChat(userId) {
-    appState.selectedChat = userId;
-    appState.currentPage = 'messages';
-    render();
-}
-
-function selectChat(userId) {
-    appState.selectedChat = userId;
-    render();
-}
-
-function sendMessage() {
-    const input = document.getElementById('message-input');
-    const msg = input?.value || appState.messageInput;
-    
-    if (!validateMessage(msg)) {
-        alert('Message must be between 1 and 500 characters');
-        return;
-    }
-    
-    appState.messages.push({
-        id: Date.now().toString(),
-        senderId: appState.currentUser.id,
-        receiverId: appState.selectedChat,
-        itemId: 'general',
-        message: msg,
-        timestamp: new Date()
-    });
-    
-    appState.messageInput = '';
-    render();
-    
-    // Scroll to bottom
-    setTimeout(() => {
-        const messagesList = document.getElementById('messages-list');
-        if (messagesList) messagesList.scrollTop = messagesList.scrollHeight;
-    }, 0);
+function contactUser(userId, itemId) {
+    alert('Contact feature coming soon! User: ' + userId);
 }
 
 function attachEventListeners() {
-    const emailInput = document.getElementById('login-email');
-    const passwordInput = document.getElementById('login-password');
-    
-    if (emailInput) {
+    const emailInput = document.getElementById('auth-email');
+    const passwordInput = document.getElementById('auth-password');
+
+    if (emailInput && appState.authMode === 'login') {
         emailInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-        });
-    }
-    
-    if (passwordInput) {
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-        });
-    }
-    
-    const titleInput = document.getElementById('post-title');
-    if (titleInput) {
-        titleInput.addEventListener('input', (e) => {
-            if (!appState.postForm) appState.postForm = {};
-            appState.postForm.title = e.target.value;
-        });
-    }
-    
-    const descInput = document.getElementById('post-description');
-    if (descInput) {
-        descInput.addEventListener('input', (e) => {
-            if (!appState.postForm) appState.postForm = {};
-            appState.postForm.description = e.target.value;
+            if (e.key === 'Enter') document.getElementById('authForm')?.dispatchEvent(new Event('submit'));
         });
     }
 
-    const msgInput = document.getElementById('message-input');
-    if (msgInput) {
-        msgInput.addEventListener('input', (e) => {
-            appState.messageInput = e.target.value;
+    const titleInput = document.getElementById('post-title');
+    if (titleInput) {
+        titleInput.addEventListener('input', (e) => {
+            appState.postForm.title = e.target.value;
         });
-        
-        msgInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
+    }
+
+    const descInput = document.getElementById('post-description');
+    if (descInput) {
+        descInput.addEventListener('input', (e) => {
+            appState.postForm.description = e.target.value;
         });
     }
 }
 
-// ============ INITIAL RENDER ============
+// ============ INIT ============
 render();
 </script>
 
