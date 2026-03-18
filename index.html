@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Connect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .user-avatar {
+            font-size: 1.5rem;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error {
+            border-color: #dc2626;
+        }
+
+        .error-text {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .char-count {
+            color: #999;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button.secondary {
+            background: #6b7280;
+        }
+
+        button.secondary:hover {
+            background: #4b5563;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 1.5rem 0;
+        }
+
+        .demo-accounts {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .demo-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        /* ===== MAIN APP ===== */
+        .app-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-button {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .nav-button:hover {
+            background: #e0e0e0;
+        }
+
+        .nav-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            margin-top: 1rem;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-button {
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            color: white;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-post-lost {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-post-found {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-browse {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .btn-messages {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        /* ===== ITEMS ===== */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .results-count {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 1rem 0;
+        }
+
+        .item-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .item-icon {
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-location {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-description {
+            color: #777;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge.lost {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.found {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge.reward {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .contact-button {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* ===== MESSAGES ===== */
+        .messages-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            min-height: 500px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .users-list {
+            background: #f9f9f9;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .user-item {
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .user-item:hover {
+            background: #f0f0f0;
+        }
+
+        .user-item.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-email {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .chat-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem 0;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 60%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            word-wrap: break-word;
+        }
+
+        .message.sent .message-content {
+            background: #667eea;
+            color: white;
+        }
+
+        .message.received .message-content {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .message-input-area {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message-input-area textarea {
+            flex: 1;
+            resize: none;
+            height: 60px;
+        }
+
+        .message-input-area button {
+            flex-shrink: 0;
+            width: auto;
+            padding: 0.75rem 1rem;
+            margin: 0;
+        }
+
+        .no-selection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+        /* ===== PROFILE ===== */
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .profile-avatar {
+            font-size: 4rem;
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            color: #666;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .profile-stat {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .profile-stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .profile-stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .messages-container {
+                grid-template-columns: 1fr;
+            }
+
+            .users-list {
+                display: none;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+
+            header {
+                margin-bottom: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ============ APPLICATION STATE ============
+let appState = {
+    currentPage: 'login',
+    currentUser: null,
+    users: [
+        { id: '1', email: 'john@example.com', password: 'password123', name: 'John Doe', phone: '+1234567890', avatar: '👨', rating: 4.5, reviews: 2 },
+        { id: '2', email: 'jane@example.com', password: 'password123', name: 'Jane Smith', phone: '+1987654321', avatar: '👩', rating: 5, reviews: 1 }
+    ],
+    items: [
+        { id: '1', userId: '1', type: 'lost', title: 'Blue Wallet', description: 'Navy blue leather wallet with driving license inside. Please help!', category: 'accessories', photo: '👜', location: 'Downtown Coffee Shop', reward: 50, createdAt: new Date(Date.now() - 3600000), userName: 'John Doe' },
+        { id: '2', userId: '2', type: 'found', title: 'iPhone 14 Pro', description: 'Found at bus station. Good condition, slightly cracked screen protector.', category: 'electronics', photo: '📱', location: 'Central Bus Station', reward: 0, createdAt: new Date(Date.now() - 7200000), userName: 'Jane Smith' },
+        { id: '3', userId: '1', type: 'found', title: 'Silver Keychain', description: 'Found with 3 keys attached. Cute rainbow charm attached.', category: 'accessories', photo: '🔑', location: 'Park Bench', reward: 0, createdAt: new Date(Date.now() - 1800000), userName: 'John Doe' }
+    ],
+    messages: [
+        { id: '1', senderId: '1', receiverId: '2', itemId: '1', message: 'Hi, did you find a blue wallet?', timestamp: new Date(Date.now() - 1800000) }
+    ],
+    filters: { searchTerm: '', type: 'all', category: 'all' },
+    selectedChat: null,
+    messageInput: '',
+    formErrors: {}
+};
+
+// ============ VALIDATION FUNCTIONS ============
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validatePassword = (password) => password.length >= 6;
+const validatePhone = (phone) => /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(phone.replace(/\s/g, ''));
+const validatePostTitle = (title) => title.trim().length >= 3 && title.trim().length <= 100;
+const validatePostDescription = (desc) => desc.trim().length >= 10 && desc.trim().length <= 2000;
+const validateLocation = (location) => location.trim().length >= 3 && location.trim().length <= 200;
+const validateReward = (reward) => !reward || (parseFloat(reward) >= 0 && parseFloat(reward) <= 10000);
+const validateMessage = (msg) => msg.trim().length > 0 && msg.trim().length <= 500;
+
+// ============ RENDER FUNCTION ============
+function render() {
+    const app = document.getElementById('app');
+    
+    if (appState.currentPage === 'login') {
+        app.innerHTML = renderLogin();
+    } else {
+        app.innerHTML = renderApp();
+    }
+    
+    attachEventListeners();
+}
+
+// ============ LOGIN PAGE ============
+function renderLogin() {
+    return `
+        <div class="login-page">
+            <div class="login-box">
+                <div class="login-header">
+                    <div class="login-icon">🔍</div>
+                    <h1 class="login-title">Lost & Found</h1>
+                    <p class="login-subtitle">Reunite lost items with their owners</p>
+                </div>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="login-email" placeholder="you@example.com" required>
+                        <span class="error-text" id="email-error"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="••••••" required>
+                        <span class="error-text" id="password-error"></span>
+                    </div>
+                    
+                    <button type="submit">Sign In</button>
+                </form>
+                
+                <div class="demo-accounts">
+                    <p class="demo-label">Demo Accounts:</p>
+                    <button type="button" class="secondary" onclick="demoLogin('john@example.com')">👨 John (password123)</button>
+                    <button type="button" class="secondary" onclick="demoLogin('jane@example.com')">👩 Jane (password123)</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ============ MAIN APP ============
+function renderApp() {
+    const userItems = appState.items.filter(i => i.userId === appState.currentUser.id);
+    const lostCount = userItems.filter(i => i.type === 'lost').length;
+    const foundCount = userItems.filter(i => i.type === 'found').length;
+    const msgCount = appState.messages.filter(m => m.senderId === appState.currentUser.id || m.receiverId === appState.currentUser.id).length;
+    
+    return `
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <span>🔍</span>
+                    <span>Lost & Found</span>
+                </div>
+                <div class="user-info">
+                    <span class="user-avatar">${appState.currentUser.avatar}</span>
+                    <span>${appState.currentUser.name}</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="app-container">
+                <!-- SIDEBAR -->
+                <div class="sidebar">
+                    <h3>Navigation</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-button ${appState.currentPage === 'home' ? 'active' : ''}" onclick="goToPage('home')">🏠 Dashboard</button>
+                        <button class="nav-button ${appState.currentPage === 'browse' ? 'active' : ''}" onclick="goToPage('browse')">🔎 Browse Items</button>
+                        <button class="nav-button ${appState.currentPage === 'post' ? 'active' : ''}" onclick="goToPage('post')">➕ Post Item</button>
+                        <button class="nav-button ${appState.currentPage === 'messages' ? 'active' : ''}" onclick="goToPage('messages')">💬 Messages</button>
+                        <button class="nav-button ${appState.currentPage === 'profile' ? 'active' : ''}" onclick="goToPage('profile')">👤 Profile</button>
+                        <button class="nav-button logout-btn" onclick="handleLogout()">🚪 Logout</button>
+                    </div>
+                </div>
+
+                <!-- MAIN CONTENT -->
+                <div class="main-content">
+                    ${appState.currentPage === 'home' ? renderHome(lostCount, foundCount, msgCount) : ''}
+                    ${appState.currentPage === 'browse' ? renderBrowse() : ''}
+                    ${appState.currentPage === 'post' ? renderPost() : ''}
+                    ${appState.currentPage === 'messages' ? renderMessages() : ''}
+                    ${appState.currentPage === 'profile' ? renderProfile() : ''}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ============ DASHBOARD PAGE ============
+function renderHome(lostCount, foundCount, msgCount) {
+    return `
+        <h2>Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">${lostCount}</div>
+                <div class="stat-label">Lost Items Posted</div>
+            </div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="stat-number">${foundCount}</div>
+                <div class="stat-label">Found Items Reported</div>
+            </div>
+            <div class="stat-box" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                <div class="stat-number">${msgCount}</div>
+                <div class="stat-label">Active Conversations</div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Quick Actions</h3>
+        <div class="quick-actions">
+            <button class="action-button btn-post-lost" onclick="goToPage('post')">📌 Post Lost Item</button>
+            <button class="action-button btn-post-found" onclick="goToPage('post')">✅ Post Found Item</button>
+            <button class="action-button btn-browse" onclick="goToPage('browse')">🔎 Browse Items</button>
+            <button class="action-button btn-messages" onclick="goToPage('messages')">💬 Messages</button>
+        </div>
+    `;
+}
+
+// ============ BROWSE PAGE ============
+function renderBrowse() {
+    const filtered = appState.items.filter(i => i.userId !== appState.currentUser.id &&
+        (appState.filters.type === 'all' || i.type === appState.filters.type) &&
+        (appState.filters.category === 'all' || i.category === appState.filters.category) &&
+        (i.title.toLowerCase().includes(appState.filters.searchTerm.toLowerCase()) ||
+         i.description.toLowerCase().includes(appState.filters.searchTerm.toLowerCase())));
+    
+    return `
+        <h2>Browse Items</h2>
+        
+        <div class="filters">
+            <div class="form-group">
+                <label>Search</label>
+                <input type="text" placeholder="Search items..." value="${appState.filters.searchTerm}" 
+                       onchange="updateFilter('searchTerm', this.value)">
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select onchange="updateFilter('type', this.value)">
+                    <option value="all">All Items</option>
+                    <option value="lost" ${appState.filters.type === 'lost' ? 'selected' : ''}>Lost Items</option>
+                    <option value="found" ${appState.filters.type === 'found' ? 'selected' : ''}>Found Items</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select onchange="updateFilter('category', this.value)">
+                    <option value="all">All Categories</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="documents">Documents</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="keys">Keys</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="results-count">${filtered.length} Results</div>
+
+        ${filtered.length === 0 ? `
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <p>No items found matching your criteria</p>
+            </div>
+        ` : `
+            ${filtered.map(item => `
+                <div class="item-card">
+                    <div class="item-icon">${item.photo}</div>
+                    <div class="item-content">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-location">📍 ${item.location}</div>
+                        <div class="item-description">${item.description.substring(0, 150)}...</div>
+                        <div class="item-meta">
+                            <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
+                            <span class="badge">${item.category}</span>
+                            ${item.reward > 0 ? `<span class="badge reward">💰 $${item.reward}</span>` : ''}
+                            <span class="badge">${item.userName}</span>
+                        </div>
+                        <button class="contact-button" onclick="startChat('${item.userId}')">💬 Contact</button>
+                    </div>
+                </div>
+            `).join('')}
+        `}
+    `;
+}
+
+// ============ POST ITEM PAGE ============
+function renderPost() {
+    const categories = ['accessories', 'electronics', 'documents', 'clothing', 'keys', 'other'];
+    const photos = {
+        accessories: ['👜', '⌚', '🎒', '👓'],
+        electronics: ['📱', '💻', '⌨️', '📷'],
+        documents: ['📄', '🪪', '📚', '📋'],
+        clothing: ['👕', '👖', '👔', '🧥'],
+        keys: ['🔑', '🗝️'],
+        other: ['📦', '🎁', '💼']
+    };
+
+    const currentPhotos = photos[appState.postForm?.category || 'accessories'] || photos.accessories;
+
+    return `
+        <h2>Post Item</h2>
+        
+        <div style="max-width: 600px;">
+            <div class="form-group">
+                <label>Select Icon</label>
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 1rem;">
+                    ${currentPhotos.map(emoji => `
+                        <button type="button" style="font-size: 1.5rem; padding: 10px; background: ${appState.postForm?.photo === emoji ? '#667eea' : '#f0f0f0'}; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;"
+                                onclick="setPostPhoto('${emoji}')">
+                            ${emoji}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="post-title" placeholder="e.g., Blue Leather Wallet" maxlength="100"
+                       value="${appState.postForm?.title || ''}"
+                       onchange="validatePostField('title')"
+                       onblur="validatePostField('title')">
+                <span class="char-count">${(appState.postForm?.title || '').length}/100</span>
+                <span class="error-text" id="title-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select id="post-category" onchange="updatePostCategory(this.value)">
+                    ${categories.map(cat => `
+                        <option value="${cat}" ${appState.postForm?.category === cat ? 'selected' : ''}>${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                    `).join('')}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="post-description" placeholder="Describe the item in detail..." rows="5" maxlength="2000"
+                         onchange="validatePostField('description')"
+                         onblur="validatePostField('description')">${appState.postForm?.description || ''}</textarea>
+                <span class="char-count">${(appState.postForm?.description || '').length}/2000</span>
+                <span class="error-text" id="description-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="post-location" placeholder="e.g., Downtown Coffee Shop"
+                       value="${appState.postForm?.location || ''}"
+                       onchange="validatePostField('location')"
+                       onblur="validatePostField('location')">
+                <span class="error-text" id="location-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Reward Amount (Optional)</label>
+                <input type="number" id="post-reward" placeholder="0" min="0" max="10000"
+                       value="${appState.postForm?.reward || ''}"
+                       onchange="validatePostField('reward')"
+                       onblur="validatePostField('reward')">
+                <span class="error-text" id="reward-error"></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button onclick="submitPost()">Post Item</button>
+                <button class="secondary" onclick="goToPage('home')">Cancel</button>
+            </div>
+        </div>
+    `;
+}
+
+// ============ MESSAGES PAGE ============
+function renderMessages() {
+    const userMessages = appState.messages.filter(m => m.senderId === appState.currentUser.id || m.receiverId === appState.currentUser.id);
+    const uniqueUsers = [...new Set(userMessages.map(m => m.senderId === appState.currentUser.id ? m.receiverId : m.senderId))];
+    const selectedMessages = appState.selectedChat ? appState.messages.filter(m => 
+        (m.senderId === appState.currentUser.id && m.receiverId === appState.selectedChat) ||
+        (m.senderId === appState.selectedChat && m.receiverId === appState.currentUser.id)
+    ) : [];
+
+    return `
+        <h2>Messages</h2>
+        <div class="messages-container">
+            <div class="users-list">
+                ${uniqueUsers.length === 0 ? '<p style="color: #999;">No conversations</p>' : ''}
+                ${uniqueUsers.map(uid => {
+                    const u = appState.users.find(x => x.id === uid);
+                    return `
+                        <div class="user-item ${appState.selectedChat === uid ? 'active' : ''}" onclick="selectChat('${uid}')">
+                            <div class="user-name">${u.avatar} ${u.name}</div>
+                            <div class="user-email">${u.email}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+
+            <div class="chat-area">
+                ${appState.selectedChat ? `
+                    <div class="chat-header">
+                        <div class="user-name">${appState.users.find(u => u.id === appState.selectedChat)?.name}</div>
+                    </div>
+                    <div class="messages-list" id="messages-list">
+                        ${selectedMessages.length === 0 ? '<p style="text-align: center; color: #999; margin-top: auto;">No messages yet</p>' : ''}
+                        ${selectedMessages.map(msg => `
+                            <div class="message ${msg.senderId === appState.currentUser.id ? 'sent' : 'received'}">
+                                <div class="message-content">
+                                    ${msg.message}
+                                    <div class="message-time">${msg.timestamp.toLocaleTimeString()}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="message-input-area">
+                        <textarea id="message-input" placeholder="Type a message..." maxlength="500"
+                                 value="${appState.messageInput}"
+                                 onchange="appState.messageInput = this.value"
+                                 onkeyup="appState.messageInput = this.value"></textarea>
+                        <button onclick="sendMessage()">Send</button>
+                    </div>
+                ` : `
+                    <div class="no-selection">Select a conversation to start messaging</div>
+                `}
+            </div>
+        </div>
+    `;
+}
+
+// ============ PROFILE PAGE ============
+function renderProfile() {
+    const userItems = appState.items.filter(i => i.userId === appState.currentUser.id);
+    
+    return `
+        <h2>Profile</h2>
+        
+        <div class="profile-header">
+            <div class="profile-avatar">${appState.currentUser.avatar}</div>
+            <div class="profile-info">
+                <h2>${appState.currentUser.name}</h2>
+                <p>📧 ${appState.currentUser.email}</p>
+                <p>📞 ${appState.currentUser.phone}</p>
+            </div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <div class="profile-stat-number">${userItems.length}</div>
+                <div class="profile-stat-label">Items Posted</div>
+            </div>
+            <div class="profile-stat">
+                <div class="profile-stat-number">${appState.currentUser.rating}</div>
+                <div class="profile-stat-label">Rating</div>
+            </div>
+            <div class="profile-stat">
+                <div class="profile-stat-number">${appState.currentUser.reviews}</div>
+                <div class="profile-stat-label">Reviews</div>
+            </div>
+            <div class="profile-stat">
+                <div class="profile-stat-number">✅</div>
+                <div class="profile-stat-label">Verified</div>
+            </div>
+        </div>
+
+        <h3 style="margin: 2rem 0 1rem;">Your Items</h3>
+        ${userItems.length === 0 ? `
+            <div class="empty-state">
+                <p>No items posted yet</p>
+            </div>
+        ` : `
+            ${userItems.map(item => `
+                <div class="item-card">
+                    <div class="item-icon">${item.photo}</div>
+                    <div class="item-content">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-location">📍 ${item.location}</div>
+                        <div style="margin-top: 0.5rem;">
+                            <span class="badge ${item.type}">${item.type === 'lost' ? '🔴 Lost' : '🟢 Found'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        `}
+    `;
+}
+
+// ============ EVENT HANDLERS ============
+function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    document.getElementById('email-error').textContent = '';
+    document.getElementById('password-error').textContent = '';
+    
+    let hasError = false;
+    
+    if (!validateEmail(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email address';
+        hasError = true;
+    }
+    
+    if (!validatePassword(password)) {
+        document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
+        hasError = true;
+    }
+    
+    if (hasError) return;
+    
+    const user = appState.users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        appState.currentUser = user;
+        appState.currentPage = 'home';
+        appState.postForm = {};
+        render();
+    } else {
+        document.getElementById('email-error').textContent = 'Invalid email or password';
+    }
+}
+
+function demoLogin(email) {
+    const user = appState.users.find(u => u.email === email);
+    if (user) {
+        appState.currentUser = user;
+        appState.currentPage = 'home';
+        appState.postForm = {};
+        render();
+    }
+}
+
+function handleLogout() {
+    appState.currentUser = null;
+    appState.currentPage = 'login';
+    appState.filters = { searchTerm: '', type: 'all', category: 'all' };
+    appState.selectedChat = null;
+    appState.postForm = {};
+    render();
+}
+
+function goToPage(page) {
+    appState.currentPage = page;
+    if (page === 'post') {
+        appState.postForm = { category: 'accessories', photo: '👜' };
+    }
+    render();
+}
+
+function updateFilter(key, value) {
+    appState.filters[key] = value;
+    render();
+}
+
+function setPostPhoto(emoji) {
+    if (!appState.postForm) appState.postForm = {};
+    appState.postForm.photo = emoji;
+    render();
+}
+
+function updatePostCategory(value) {
+    if (!appState.postForm) appState.postForm = {};
+    appState.postForm.category = value;
+    render();
+}
+
+function validatePostField(field) {
+    if (!appState.postForm) appState.postForm = {};
+    const errorEl = document.getElementById(field + '-error');
+    let valid = true;
+    let value = document.getElementById('post-' + field)?.value || '';
+    appState.postForm[field] = value;
+    
+    if (field === 'title') {
+        if (!validatePostTitle(value)) {
+            errorEl.textContent = 'Title must be between 3 and 100 characters';
+            valid = false;
+        }
+    } else if (field === 'description') {
+        if (!validatePostDescription(value)) {
+            errorEl.textContent = 'Description must be between 10 and 2000 characters';
+            valid = false;
+        }
+    } else if (field === 'location') {
+        if (!validateLocation(value)) {
+            errorEl.textContent = 'Location must be between 3 and 200 characters';
+            valid = false;
+        }
+    } else if (field === 'reward') {
+        if (!validateReward(value)) {
+            errorEl.textContent = 'Reward must be a number between 0 and 10000';
+            valid = false;
+        }
+    }
+    
+    if (valid && errorEl) errorEl.textContent = '';
+    return valid;
+}
+
+function submitPost() {
+    if (!appState.postForm) appState.postForm = {};
+    appState.postForm.title = document.getElementById('post-title')?.value || '';
+    appState.postForm.description = document.getElementById('post-description')?.value || '';
+    appState.postForm.location = document.getElementById('post-location')?.value || '';
+    appState.postForm.reward = document.getElementById('post-reward')?.value || '0';
+    
+    const titleValid = validatePostField('title');
+    const descValid = validatePostField('description');
+    const locValid = validatePostField('location');
+    const rewValid = validatePostField('reward');
+    
+    if (!titleValid || !descValid || !locValid || !rewValid) return;
+    
+    const newItem = {
+        id: Date.now().toString(),
+        userId: appState.currentUser.id,
+        type: 'lost',
+        title: appState.postForm.title,
+        description: appState.postForm.description,
+        category: appState.postForm.category,
+        location: appState.postForm.location,
+        photo: appState.postForm.photo,
+        reward: parseFloat(appState.postForm.reward) || 0,
+        createdAt: new Date(),
+        userName: appState.currentUser.name
+    };
+    
+    appState.items.push(newItem);
+    appState.postForm = {};
+    appState.currentPage = 'home';
+    alert('Item posted successfully!');
+    render();
+}
+
+function startChat(userId) {
+    appState.selectedChat = userId;
+    appState.currentPage = 'messages';
+    render();
+}
+
+function selectChat(userId) {
+    appState.selectedChat = userId;
+    render();
+}
+
+function sendMessage() {
+    const input = document.getElementById('message-input');
+    const msg = input?.value || appState.messageInput;
+    
+    if (!validateMessage(msg)) {
+        alert('Message must be between 1 and 500 characters');
+        return;
+    }
+    
+    appState.messages.push({
+        id: Date.now().toString(),
+        senderId: appState.currentUser.id,
+        receiverId: appState.selectedChat,
+        itemId: 'general',
+        message: msg,
+        timestamp: new Date()
+    });
+    
+    appState.messageInput = '';
+    render();
+    
+    // Scroll to bottom
+    setTimeout(() => {
+        const messagesList = document.getElementById('messages-list');
+        if (messagesList) messagesList.scrollTop = messagesList.scrollHeight;
+    }, 0);
+}
+
+function attachEventListeners() {
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+    
+    if (emailInput) {
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        });
+    }
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        });
+    }
+    
+    const titleInput = document.getElementById('post-title');
+    if (titleInput) {
+        titleInput.addEventListener('input', (e) => {
+            if (!appState.postForm) appState.postForm = {};
+            appState.postForm.title = e.target.value;
+        });
+    }
+    
+    const descInput = document.getElementById('post-description');
+    if (descInput) {
+        descInput.addEventListener('input', (e) => {
+            if (!appState.postForm) appState.postForm = {};
+            appState.postForm.description = e.target.value;
+        });
+    }
+
+    const msgInput = document.getElementById('message-input');
+    if (msgInput) {
+        msgInput.addEventListener('input', (e) => {
+            appState.messageInput = e.target.value;
+        });
+        
+        msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+}
+
+// ============ INITIAL RENDER ============
+render();
+</script>
+
+</body>
+</html>
